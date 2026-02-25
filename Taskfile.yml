@@ -1,0 +1,30 @@
+---
+version: '3'
+
+
+tasks:
+  deps:
+    desc: Install dependencies
+    cmds:
+      - sudo apt update
+      # For x86-64, NASM (Netwide Assembler) is the standard
+      - sudo apt install nasm build-essential gdb
+  assy:
+    desc: Assemble
+    dir: src
+    cmds:
+      - nasm -f elf64 loadavg.asm -o loadavg.o
+  link:
+    desc: Link
+    dir: src
+    cmds:
+      - ld loadavg.o -o loadavg
+  run:
+    desc: Run
+    dir: src
+    cmds:
+      - ./loadavg
+  default:
+    cmds:
+      - task -l
+    silent: true
