@@ -1,5 +1,7 @@
 # :rocket: amd64-sys-fetch :zap:
 
+[![task](https://img.shields.io/badge/Task-Enabled-brightgreen?style=for-the-badge&logo=task&logoColor=white)](https://taskfile.dev/#/)
+
 **`amd64-sys-fetch`** is a fast, dependency-free CLI tool designed for headless Linux environments. Bypassing standard libraries entirely, this project interacts directly with the Linux kernel using x86_64 system calls to extract and display real-time system metrics. 
 
 By reading directly from virtual files like `/proc/loadavg` and parsing the data in pure [NASM assembly](https://www.nasm.us/doc/nasm03.html), this tool provides a hyper-optimized way to monitor server health without the overhead of heavy scripts or subshells.
