@@ -4,27 +4,27 @@
 
 **`amd64-sys-fetch`** is a fast, dependency-free CLI tool designed for headless Linux environments. Bypassing standard libraries entirely, this project interacts directly with the Linux kernel using x86_64 system calls to extract and display real-time system metrics. 
 
-By reading directly from virtual files like `/proc/loadavg` and parsing the data in pure [NASM assembly](https://www.nasm.us/doc/nasm03.html), this tool provides a hyper-optimized way to monitor server health without the overhead of heavy scripts or subshells.
+By reading directly from virtual files like `/proc/loadavg` and parsing the data in pure [GNU Assembler (GAS)](https://sourceware.org/binutils/docs/as/), this tool provides a hyper-optimized way to monitor server health without the overhead of heavy scripts or subshells.
 
 ## :sparkles: Key Features
-* **Pure Assembly:** Written strictly in `x86_64` assembly using NASM, giving absolute control over memory and 64-bit CPU registers.
+* **Pure Assembly:** Written strictly in `x86_64` assembly using the GNU Assembler, giving absolute control over memory and 64-bit CPU registers.
 * **Zero Dependencies:** Runs natively without the C standard library (libc) or any external package requirements.
 * **Direct Kernel I/O:** Utilizes native Linux system calls (via the `syscall` instruction) for all file operations and terminal output.
 * **Low Overhead:** Executes instantly, making it a perfectly lightweight monitoring tool for Debian servers.
 
 ## :package: Installation
 
-This project requires **NASM** and standard build tools. On Debian/Ubuntu:
+This project requires the **GNU Assembler (as)** and standard build tools. On Debian/Ubuntu:
 
 ```bash
 sudo apt update
-sudo apt install nasm build-essential
+sudo apt install binutils build-essential
 ```
 
 If you have [Task](https://taskfile.dev/) installed, you can also run:
 
 ```bash
-task deps
+task deps:amd64
 ```
 
 ## :hammer_and_wrench: Development
@@ -43,15 +43,15 @@ If you prefer to run the commands manually:
 
 1. **Assemble:** Convert the source code into an object file.
    ```bash
-   nasm -f elf64 src/loadavg.asm -o src/loadavg.o
+   as src/x86_64/main.S -o src/x86_64/main.o
    ```
 2. **Link:** Create the final executable.
    ```bash
-   ld src/loadavg.o -o src/loadavg
+   ld src/x86_64/main.o -o bin/sys-fetch
    ```
 3. **Run:**
    ```bash
-   ./src/loadavg
+   ./bin/sys-fetch
    ```
 
 ### Debugging
@@ -59,7 +59,7 @@ If you prefer to run the commands manually:
 To assemble with debug symbols and start a [GDB](https://www.sourceware.org/gdb/) session:
 
 ```bash
-task dbg
+task dbg:amd64
 ```
 
 Once inside the GDB session, you can use the following commands to step through the program:
@@ -222,7 +222,7 @@ For a complete, searchable, and up-to-date list with full argument details, refe
 | **101** | `ptrace` | Process trace and debugging control. |
 | **102** | `getuid` | Get real user identity. |
 | **103** | `syslog` | Control kernel message ring buffer. |
-| **104** | `getgid` | Get real group identity. |
+| **104** | `getuid` | Get real group identity. |
 | **105** | `setuid` | Set user identity. |
 | **106** | `setgid` | Set group identity. |
 | **107** | `geteuid` | Get effective user identity. |
@@ -494,27 +494,23 @@ For a complete, searchable, and up-to-date list with full argument details, refe
 | **461** | `lsm_list_modules` | List available Security Modules. |
 </details>
 
-## :file_folder: NASM Section Reference
+## :file_folder: GAS Section Reference
 
 *   **`.text`**: Contains the actual executable code.
 *   **`.data`**: Used for declaring initialized data or constants.
 *   **`.bss`** (**Block Started by Symbol**): Used for declaring uninitialized variables. This section does not take up space in the executable file.
 
-## :memo: NASM Data Declaration Directives
+## :memo: GAS Data Declaration Directives
 
 The following directives are used in the `.data` section to declare and initialize storage space for variables.
 
 | Directive | Purpose | Standard Size |
 | :--- | :--- | :--- |
-| **`DB`** | Define Byte | 1 byte |
-| **`DW`** | Define Word | 2 bytes |
-| **`DD`** | Define Doubleword | 4 bytes |
-| **`DQ`** | Define Quadword | 8 bytes |
-| **`DT`** | Define Ten Bytes | 10 bytes |
-| **`DDQ`** | Define Double Quadword | 16 bytes |
-| **`DO`** | Define Octoword | 16 bytes |
-| **`DY`** | Define Y-word | 32 bytes |
-| **`DZ`** | Define Z-word | 64 bytes |
+| **`.byte`** | Define Byte | 1 byte |
+| **`.short`** | Define Short (Word) | 2 bytes |
+| **`.long`** | Define Long (Doubleword) | 4 bytes |
+| **`.quad`** | Define Quadword | 8 bytes |
+| **`.octa`** | Define Octoword | 16 bytes |
 
 ## :balance_scale: License
 

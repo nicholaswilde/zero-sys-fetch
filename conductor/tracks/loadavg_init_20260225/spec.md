@@ -1,7 +1,7 @@
 # Specification: loadavg_init_20260225
 
 ## Problem Statement
-The project `amd64-sys-fetch` lacks a formal build and verification system, and the documentation for the system calls used in `loadavg.asm` is not centralized for quick reference during learning.
+The project `amd64-sys-fetch` lacks a formal build and verification system, and the documentation for the system calls used in `src/x86_64/main.S` is not centralized for quick reference during learning.
 
 ## Goals
 1.  **Build Automation:** Simplify the multi-step `assy` and `link` process into a single `build` command.
@@ -9,7 +9,7 @@ The project `amd64-sys-fetch` lacks a formal build and verification system, and 
 3.  **Automated Verification:** Create a non-interactive script to verify the correctness of the build and basic functionality of the binary.
 
 ## Requirements
-- No modification of `.asm` files by the AI agent.
+- No modification of `.S` files by the AI agent.
 - `Taskfile.yml` must support `build`, `test`, and `clean` tasks.
 - Documentation must include register maps and opcodes for `sys_open`, `sys_read`, `sys_write`, `sys_close`, and `sys_exit`.
 

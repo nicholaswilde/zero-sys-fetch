@@ -1,58 +1,83 @@
----
 version: '3'
 
 vars:
-  NAME: loadavg
+  NAME: main
+  BIN: sys-fetch
 
 tasks:
-  deps:
-    desc: Install dependencies
+  clean:
+    desc: Remove all build artifacts and intermediate files
+    cmds:
+      - rm -rf bin/{{.BIN}}
+      - rm -f src/x86_64/*.o
+      - rm -f ref/rosetta-amd64 ref/rosetta-amd64.s
+
+  deps:amd64:
+    desc: Install build dependencies for amd64 (x86_64)
     cmds:
       - sudo apt update
-      # For x86-64, NASM (Netwide Assembler) is the standard
-      - sudo apt install nasm build-essential gdb
-  assy:
-    desc: Assemble
-    dir: src
+      - sudo apt install -y binutils build-essential gdb
+
+  deps:arm64:
+    desc: Install build dependencies for arm64 (aarch64)
     cmds:
-      - nasm -f elf64 {{.NAME}}.asm -o {{.NAME}}.o
-  link:
-    desc: Link
-    dir: src
+      - sudo apt update
+      - sudo apt install -y binutils-aarch64-linux-gnu build-essential gdb
+
+  assy:amd64:
+    desc: Assemble the amd64 source code into an object file
+    dir: src/x86_64
     cmds:
-      - ld {{.NAME}}.o -o {{.NAME}}
-  run:
-    desc: Run
-    dir: src
+      - as {{.NAME}}.S -o {{.NAME}}.o
+
+  link:amd64:
+    desc: Link the amd64 object file into the final executable
     cmds:
-      - ./{{.NAME}}
+      - mkdir -p bin
+      - ld src/x86_64/{{.NAME}}.o -o bin/{{.BIN}}
+
+  build:amd64:
+    desc: Assemble and link the amd64 tool
+    cmds:
+      - task: assy:amd64
+      - task: link:amd64
+
+  run:amd64:
+    desc: Execute the amd64 binary
+    cmds:
+      - ./bin/{{.BIN}}
+
   build-run:
-    desc: Assemble, link, and run the tool
+    desc: Build and run the amd64 tool
     cmds:
-      - task: assy
-      - task: link
-      - task: run
-  dbg:
-    desc: Assemble, link, and debug the tool
-    dir: src
+      - task: build:amd64
+      - task: run:amd64
+
+  dbg:amd64:
+    desc: Build with debug symbols and start GDB for amd64
     cmds:
-      - nasm -f elf64 -g -F dwarf {{.NAME}}.asm -o {{.NAME}}.o
-      - ld {{.NAME}}.o -o amd64-sys-fetch
-      - gdb ./amd64-sys-fetch
+      - mkdir -p bin
+      - as -g src/x86_64/{{.NAME}}.S -o src/x86_64/{{.NAME}}.o
+      - ld src/x86_64/{{.NAME}}.o -o bin/{{.BIN}}
+      - gdb bin/{{.BIN}}
+
   rosetta-amd64:
-    desc: Compile rosetta.c for amd64
+    desc: Compile and generate assembly listing for the C reference implementation
     dir: ref
     cmds:
       - gcc -o rosetta-amd64 rosetta.c
       - gcc -S -o rosetta-amd64.s rosetta.c
+
   view-rosetta-asm:
-    desc: View the generated assembly for rosetta.c
+    desc: Display the generated assembly for the C reference implementation
     preconditions:
       - sh: test -f ref/rosetta-amd64.s
         msg: "Run 'task rosetta-amd64' first to generate the assembly listing."
     cmds:
       - command -v bat > /dev/null && bat ref/rosetta-amd64.s || cat ref/rosetta-amd64.s
+
   default:
+    desc: List all available tasks
     cmds:
       - task -l
     silent: true
