@@ -77,6 +77,19 @@ Once inside the GDB session, you can use the following commands to step through 
 (gdb) x/s &buffer    # Examine the buffer as a string
 ```
 
+### Inspection
+
+To disassemble and inspect the machine code, you can use `objdump`:
+
+1. **Object File:**
+   ```bash
+   objdump -d src/x86_64/main.o
+   ```
+2. **Final Binary:**
+   ```bash
+   objdump -d bin/sys-fetch
+   ```
+
 ## :books: Learning & Reference
 
 To support the transition from C to x86_64 assembly, this project includes a reference snippet from the [Rosetta Stone](https://github.com/lowleveltv/rosetta-stone) project.
