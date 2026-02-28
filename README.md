@@ -52,11 +52,11 @@ task build-run:arm64
 
 #### amd64 (x86_64)
 1. **Assemble:** `as src/x86_64/main.S -o src/x86_64/main.o`
-2. **Link:** `ld src/x86_64/main.o -o bin/sys-fetch-amd64`
+2. **Link:** `ld src/x86_64/main.o -o bin/x86_64/sys-fetch`
 
 #### arm64 (aarch64)
 1. **Assemble:** `aarch64-linux-gnu-as src/aarch64/main.S -o src/aarch64/main.o`
-2. **Link:** `aarch64-linux-gnu-ld src/aarch64/main.o -o bin/sys-fetch-arm64`
+2. **Link:** `aarch64-linux-gnu-ld src/aarch64/main.o -o bin/aarch64/sys-fetch`
 
 ### Debugging (amd64)
 
