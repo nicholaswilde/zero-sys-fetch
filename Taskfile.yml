@@ -47,6 +47,21 @@ tasks:
     cmds:
       - ./bin/{{.BIN}}
 
+  inspect:bin:amd64:
+    desc: Disassemble the amd64 binary using objdump
+    cmds:
+      - objdump -d bin/{{.BIN}}
+
+  inspect:obj:amd64:
+    desc: Disassemble the amd64 object file using objdump
+    cmds:
+      - objdump -d src/x86_64/{{.NAME}}.o
+
+  strace:amd64:
+    desc: Trace system calls of the amd64 binary using strace
+    cmds:
+      - strace ./bin/{{.BIN}}
+
   build-run:
     desc: Build and run the amd64 tool
     cmds:

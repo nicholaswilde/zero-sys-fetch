@@ -90,6 +90,14 @@ To disassemble and inspect the machine code, you can use `objdump`:
    objdump -d bin/sys-fetch
    ```
 
+### System Call Tracing
+
+To trace the system calls made by the binary in real-time, use `strace`:
+
+```bash
+strace ./bin/sys-fetch
+```
+
 ## :books: Learning & Reference
 
 To support the transition from C to x86_64 assembly, this project includes a reference snippet from the [Rosetta Stone](https://github.com/lowleveltv/rosetta-stone) project.
