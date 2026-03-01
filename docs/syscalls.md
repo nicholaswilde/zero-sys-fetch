@@ -1,8 +1,10 @@
-# Linux x86_64 System Calls Reference
+# Linux System Calls Reference
 
-This document provides a reference for the Linux system calls (x86_64 architecture) used in the `sys-fetch` project.
+This document provides a reference for the Linux system calls used in the `sys-fetch` project.
 
-## Architecture Register Map (x86_64)
+## x86_64 Architecture Reference
+
+### Register Map (x86_64)
 
 | Register | Role |
 | :--- | :--- |
@@ -14,45 +16,74 @@ This document provides a reference for the Linux system calls (x86_64 architectu
 | `R8` | 5th argument |
 | `R9` | 6th argument |
 
-## System Call Opcodes & Arguments
+### System Call Opcodes (x86_64)
 
-### `sys_read` (0)
+- `sys_read`: 0
+- `sys_write`: 1
+- `sys_open`: 2
+- `sys_close`: 3
+- `sys_exit`: 60
+
+---
+
+## ARMv7 (32-bit) Architecture Reference
+
+### Register Map (ARMv7)
+
+| Register | Role |
+| :--- | :--- |
+| `R7` | System call number |
+| `R0` | 1st argument / Return value |
+| `R1` | 2nd argument |
+| `R2` | 3rd argument |
+| `R3` | 4th argument |
+| `R4` | 5th argument |
+| `R5` | 6th argument |
+
+### System Call Opcodes (ARMv7)
+
+- `sys_exit`: 1
+- `sys_read`: 3
+- `sys_write`: 4
+- `sys_open`: 5
+- `sys_close`: 6
+
+---
+
+## Shared System Call Arguments
+
+### `sys_read`
 Used to read from a file descriptor.
-- **Number:** `0`
 - **Arguments:**
-  - `RDI`: `unsigned int fd` (File descriptor)
-  - `RSI`: `char *buf` (Pointer to buffer)
-  - `RDX`: `size_t count` (Number of bytes to read)
-- **Return Value:** Number of bytes read on success; `-1` on error.
+  - `fd`: File descriptor
+  - `*buf`: Pointer to buffer
+  - `count`: Number of bytes to read
+- **Return Value:** Number of bytes read on success; negative error code on failure.
 
-### `sys_write` (1)
+### `sys_write`
 Used to write to a file descriptor.
-- **Number:** `1`
 - **Arguments:**
-  - `RDI`: `unsigned int fd` (File descriptor, e.g., `1` for `stdout`)
-  - `RSI`: `const char *buf` (Pointer to buffer)
-  - `RDX`: `size_t count` (Number of bytes to write)
-- **Return Value:** Number of bytes written on success; `-1` on error.
+  - `fd`: File descriptor
+  - `*buf`: Pointer to buffer
+  - `count`: Number of bytes to write
+- **Return Value:** Number of bytes written on success; negative error code on failure.
 
-### `sys_open` (2)
+### `sys_open`
 Used to open a file.
-- **Number:** `2`
 - **Arguments:**
-  - `RDI`: `const char *filename` (Path to the file)
-  - `RSI`: `int flags` (Access mode, e.g., `O_RDONLY = 0`)
-  - `RDX`: `umode_t mode` (File permissions if creating)
-- **Return Value:** New file descriptor on success; `-1` on error.
+  - `*filename`: Path to the file
+  - `flags`: Access mode (e.g., `O_RDONLY = 0`)
+  - `mode`: File permissions if creating
+- **Return Value:** New file descriptor on success; negative error code on failure.
 
-### `sys_close` (3)
+### `sys_close`
 Used to close a file descriptor.
-- **Number:** `3`
 - **Arguments:**
-  - `RDI`: `unsigned int fd` (File descriptor to close)
-- **Return Value:** `0` on success; `-1` on error.
+  - `fd`: File descriptor to close
+- **Return Value:** `0` on success; negative error code on failure.
 
-### `sys_exit` (60)
+### `sys_exit`
 Used to terminate the calling process.
-- **Number:** `60`
 - **Arguments:**
-  - `RDI`: `int error_code` (Exit status code)
+  - `error_code`: Exit status code
 - **Return Value:** None (does not return).
