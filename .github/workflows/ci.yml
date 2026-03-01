@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and Test (${{ matrix.arch }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm64]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: task deps:${{ matrix.arch }}
+
+      - name: Build
+        run: task build:${{ matrix.arch }}
+
+      - name: Install QEMU (arm64 only)
+        if: matrix.arch == 'arm64'
+        run: sudo apt install -y qemu-user
+
+      - name: Run and Verify
+        run: task run:${{ matrix.arch }}
