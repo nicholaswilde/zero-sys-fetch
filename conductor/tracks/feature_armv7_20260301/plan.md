@@ -9,7 +9,7 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Architecture & Documentation Scaffolding' (Protocol in workflow.md) [d66f98e]
 
 ## Phase 2: Build & Execution Automation
-- [ ] Task: Enhance `Taskfile.yml` with ARMv7 tasks.
+- [~] Task: Enhance `Taskfile.yml` with ARMv7 tasks.
     - [ ] Add `assy:armv7`, `link:armv7`, `build:armv7`, and `run:armv7` tasks.
     - [ ] Update generic `build` task to support `armv7l`.
     - [ ] Update generic `test` task to support `armv7l`.
