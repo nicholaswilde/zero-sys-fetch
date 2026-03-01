@@ -1,12 +1,12 @@
 # Implementation Plan: feature_armv7_20260301
 
-## Phase 1: Architecture & Documentation Scaffolding
+## Phase 1: Architecture & Documentation Scaffolding [checkpoint: d66f98e]
 - [x] Task: Create architecture-specific directory structure. [188af50]
     - [x] Create `src/armv7/` directory.
 - [x] Task: Update `docs/syscalls.md` with ARMv7 register map and syscall numbers. [9117ad7]
     - [x] Research and document ARMv7 syscalls (read: 3, write: 4, open: 5, close: 6, exit: 1).
     - [x] Add ARMv7 register map (R7 for syscall number, R0-R6 for arguments).
-- [~] Task: Conductor - User Manual Verification 'Phase 1: Architecture & Documentation Scaffolding' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Architecture & Documentation Scaffolding' (Protocol in workflow.md) [d66f98e]
 
 ## Phase 2: Build & Execution Automation
 - [ ] Task: Enhance `Taskfile.yml` with ARMv7 tasks.
