@@ -1,13 +1,13 @@
 # Product Guidelines: sys-fetch
 
 ## Development Principles
-* **Assembly-First:** The primary goal is learning assembly (x86_64 & AArch64). High-level abstractions are discouraged.
-* **Direct I/O:** Use native Linux system calls (`syscall` on amd64, `svc` on arm64) instead of library functions.
+* **Assembly-First:** The primary goal is learning assembly (x86_64, AArch64, & ARMv7). High-level abstractions are discouraged.
+* **Direct I/O:** Use native Linux system calls (`syscall` on amd64, `svc` on arm64/armv7) instead of library functions.
 * **Minimalist Architecture:** Prioritize linear execution and explicit register management.
 
 ## Project Structure & Conventions
-* **Source:** All `.S` files reside in architecture-specific subdirectories under `src/` (e.g., `src/x86_64/`, `src/aarch64/`).
-* **Build Artifacts:** Compiled objects (`.o`) and final binaries are generated within architecture-specific subdirectories under `bin/` (e.g., `bin/x86_64/`, `bin/aarch64/`).
+* **Source:** All `.S` files reside in architecture-specific subdirectories under `src/` (e.g., `src/x86_64/`, `src/aarch64/`, `src/armv7/`).
+* **Build Artifacts:** Compiled objects (`.o`) and final binaries are generated within architecture-specific subdirectories under `bin/` (e.g., `bin/x86_64/`, `bin/aarch64/`, `bin/armv7/`).
 * **Code Style:** Use GNU Assembler-compatible syntax and follow consistent indentation for labels, instructions, and operands.
 
 ## Documentation Standards
