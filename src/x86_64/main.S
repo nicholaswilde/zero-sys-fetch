@@ -29,8 +29,16 @@
     suffix:    .ascii "\033[0m (15m)\n"
     .equ suffix_len, . - suffix
 
+    host_path: .asciz "/proc/sys/kernel/hostname"
+    host_err: .ascii "Error: Could not open /proc/sys/kernel/hostname\n"
+    .equ host_err_len, . - host_err      # The '.' represents the current memory address
+            
+    host_pref: .ascii "Hostname: \033[1;32m"  # Green text
+    .equ host_pref_len, . - host_pref
+
 .bss
     .lcomm buffer, 2048     # Allocate 2KB of uninitialized memory
+    .lcomm host_buffer, 256  # 256 bytes is plenty for a hostname
 
 .text
 _start:
@@ -102,6 +110,29 @@ _start:
     mov %rcx, %r15        
     sub %r14, %r15          
 
+    # 1. Open /proc/sys/kernel/hostname
+    mov $2, %rax            # sys_open
+    mov $host_path, %rdi
+    mov $0, %rsi            # O_RDONLY
+    syscall
+
+    cmp $0, %rax            # Compare 0 to %rax
+    jl .host_error
+
+    # 2. Read the file
+    mov %rax, %r8           # Save file descriptor
+    mov $0, %rax            # sys_read
+    mov %r8, %rdi
+    mov $host_buffer, %rsi
+    mov $256, %rdx
+    syscall
+    mov %rax, %r9           # Save number of bytes read (length)
+    
+    # 3. Close the file
+    mov $3, %rax            # sys_close
+    mov %r8, %rdi
+    syscall
+
     # ----------------------------------------------------
     # 3. PRINT THE OUTPUT
     # ----------------------------------------------------
@@ -113,6 +144,11 @@ _start:
     print %r13, %r15              
     print $suffix, $suffix_len
 
+    # 4. Print Prefix and Hostname
+    # (Using your existing print macro)
+    print $host_pref, $host_pref_len
+    print $host_buffer, %r9
+
     # ----------------------------------------------------
     # 4. EXITS
     # ----------------------------------------------------
@@ -123,6 +159,12 @@ _start:
 
 .load_error:
     print $load_err, $load_err_len
+    mov $60, %rax         
+    mov $1, %rdi            
+    syscall
+
+.host_error:
+    print $host_err, $host_err_len
     mov $60, %rax         
     mov $1, %rdi            
     syscall

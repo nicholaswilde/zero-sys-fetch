@@ -40,8 +40,16 @@
     suffix:    .ascii "\033[0m (15m)\n"
     .equ suffix_len, . - suffix
 
+    host_path: .asciz "/proc/sys/kernel/hostname"
+    host_err:  .ascii "Error: Could not open /proc/sys/kernel/hostname\n"
+    .equ host_err_len, . - host_err
+
+    host_pref: .ascii "Hostname: \033[1;32m"  // Green text
+    .equ host_pref_len, . - host_pref
+
 .bss
-    .lcomm buffer, 2048     // Allocate 2KB of uninitialized memory
+    .lcomm buffer, 2048       // Allocate 2KB of uninitialized memory
+    .lcomm host_buffer, 256   // 256 bytes is plenty for a hostname
 
 .text
 _start:
@@ -115,6 +123,32 @@ _start:
 .found_15m:
     sub x29, x20, x28       // Length of 15m
 
+    # 1. Open /proc/sys/kernel/hostname
+    mov x8, #56             // sys_openat
+    mov x0, #-100           // AT_FDCWD
+    adrp x1, host_path
+    add x1, x1, :lo12:host_path
+    mov x2, #0              // O_RDONLY
+    svc #0
+
+    cmp x0, #0
+    blt .host_error  
+  
+    # 2. Read the file
+    mov x19, x0             // Save FD
+    mov x8, #63             // sys_read
+    mov x0, x19
+    adrp x1, host_buffer
+    add x1, x1, :lo12:host_buffer
+    mov x2, #256
+    svc #0
+    mov x20, x0             // Save length
+
+    # 3. Close the file
+    mov x8, #57             // sys_close
+    mov x0, x19
+    svc #0
+
     # ----------------------------------------------------
     # 3. PRINT THE OUTPUT
     # ----------------------------------------------------
@@ -126,6 +160,12 @@ _start:
     print_reg x27, x29              
     print suffix, suffix_len
 
+    print host_pref, host_pref_len
+    # Point x21 to host_buffer before printing
+    adrp x21, host_buffer
+    add x21, x21, :lo12:host_buffer
+    print_reg x21, x20      // x20 correctly contains the length from the read call
+
     # ----------------------------------------------------
     # 4. EXITS
     # ----------------------------------------------------
@@ -136,6 +176,12 @@ _start:
 
 .load_error:
     print load_err, load_err_len
+    mov x8, #93         
+    mov x0, #1            
+    svc #0
+
+.host_error:
+    print host_err, host_err_len
     mov x8, #93         
     mov x0, #1            
     svc #0
