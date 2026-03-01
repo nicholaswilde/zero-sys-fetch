@@ -4,9 +4,6 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [x] **Track: Implement automated build, test, and documentation for loadavg utility**
-  *Link: [./tracks/loadavg_init_20260225/](./tracks/loadavg_init_20260225/)*
-
 - [ ] **Track: Implement OS detection (Ubuntu 25.04 x86_64)**
   *Link: [./tracks/feature_os_20260301/](./tracks/feature_os_20260301/)*
 
